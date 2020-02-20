@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZIP Decoy</title>
+  <style type="text/css" media="screen">
+body {
+  background-color: white;
+  color: black;
+}
+  </style>
+</head>
+
+<body>
+
+<main>
+<h1>ZIP Decoy</h1>
+
+<form id="decoy" name="decoy" action="" method="get">
+<p>Find the
+<select id="limit" name="limit">
+  <option value="10">10</option>
+  <option value="20">20</option>
+  <option value="50">50</option>
+  <option value="100">100</option>
+</select>
+nearest ZIP codes from
+<input type="text" id="origin" name="origin" autofocus required maxlength="5" minlength="5" pattern="[0-9]{5}" placeholder="90210" spellcheck="false">
+<button type="submit">Find!</button></p>
+<output id="neighbors" name="neighbors" for="origin"></output>
+</form>
+</main>
+
+<script>
+function toRadians(degrees) {
+  return degrees * Math.PI / 180;
+}
+
+/*
+ * Return the great-circle distance (in miles) between (lat1, lon1) and (lat2, lon2).
+ *
+ * Uses the smaller polar radius of 3950 miles.
+ */
+function haversineDistance(lat1, lon1, lat2, lon2, radius = 3950) {
+  lat1 = toRadians(lat1);
+  lon1 = toRadians(lon1);
+  lat2 = toRadians(lat2);
+  lon2 = toRadians(lon2);
+  let haversineLatitude = (1 - Math.cos(lat2 - lat1)) / 2,
+      haversineLongitude = (1 - Math.cos(lon2 - lon1)) / 2,
+      h = haversineLatitude + (Math.cos(lat1) * Math.cos(lat2) * haversineLongitude);
+  return 2 * radius * Math.asin(Math.sqrt(h));
+}
+
+/*
+ * Return the limit nearest ZIP codes to origin.
+ */
+function findNeighbors(origin, limit) {
+  console.log(origin, limit);
+  return [];
+}
+
+/*
+ * Display neighbors as list elements under node.
+ */
+function displayList(node, neighbors) {
+  for (let n of neighbors) {
+  }
+}
+
+/*
+ * Unit tests
+ */
+function test() {
+  for (let [value, expected] of [
+    [0, 0],
+    [30, Math.PI / 6],
+    [45, Math.PI / 4],
+    [60, Math.PI / 3],
+    [90, Math.PI / 2],
+    [120, 2 * Math.PI / 3],
+    [135, 3 * Math.PI / 4],
+    [150, 5 * Math.PI / 6],
+    [180, Math.PI],
+    [210, 7 * Math.PI / 6],
+    [225, 5 * Math.PI / 4],
+    [240, 4 * Math.PI / 3],
+    [270, 3 * Math.PI / 2],
+    [300, 10 * Math.PI / 6],
+    [315, 7 * Math.PI / 4],
+    [330, 11 * Math.PI / 6],
+    [360, 2 * Math.PI]]) {
+    console.assert(toRadians(value).toFixed(12) == expected.toFixed(12),
+                   {msg: 'toRadians() is incorrect.'});
+  }
+
+  // Test the distance between Los Angeles (34.05, -118.25) and New York (40.661, -73.944)
+  console.assert(haversineDistance(34.05, -118.25, 40.661, -73.944).toFixed(1) == 2444.0,
+                 {msg: 'haversineDistance() is incorrect.'});
+  console.assert(haversineDistance(40.661, -73.944, 34.05, -118.25).toFixed(1) == 2444.0,
+                 {msg: 'haversineDistance() is incorrect.'});
+  // Test the distance between New York (40.661, -73.944) and London (51.5074, -0.1275)
+  console.assert(haversineDistance(40.661, -73.944, 51.5074, -0.1275, 3950).toFixed(1) == 3453.2,
+                 {msg: 'haversineDistance() is incorrect.'});
+  console.assert(haversineDistance(51.5074, -0.1275, 40.661, -73.944, 3950).toFixed(1) == 3453.2,
+                 {msg: 'haversineDistance() is incorrect.'});
+
+  console.assert(findNeighbors('90210', 10).length == 0,
+                 {msg: 'findNeighbors() is incorrect.'});
+}
+test();
+
+let form = document.querySelector('#decoy');
+form.addEventListener('submit', (event) => {
+  let output = document.querySelector('#neighbors'),
+      neighbors = findNeighbors(form.origin.value, Math.max(10, Number(form.limit.value)));
+  if (output instanceof Node) {
+    displayList(output, neighbors);
+  }
+  event.preventDefault();
+});
+</script>
+</body>
+
+</html>

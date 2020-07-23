@@ -137,7 +137,7 @@ if __name__ == '__main__':
             if args.csv:
                 print(args.delimiter.join([zcta, latitude, longitude]))
             else:
-                print('  {{"zip": "{0}", "lat": {1}, "lon": {2}}},'.format(
+                print('  ["{0}", {{"lat": {1}, "lon": {2}}}],'.format(
                     zcta, latitude, longitude))
     else:
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(_UnitTest)

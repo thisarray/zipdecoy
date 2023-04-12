@@ -1,7 +1,6 @@
 """Extract the latitude and longitude coordinates for ZCTA."""
 
 import csv
-import os.path
 import unittest
 
 _ZCTA_PREFIX = 'GEOID'
@@ -32,7 +31,7 @@ def _extract(path, delimiter='\t'):
     Args:
         path: String path to the raw, decompressed U.S. Census gazetteer file.
         delimiter: Optional string delimiter used in the U.S. Census gazetteer
-            file. Defaults to tab.
+            file. Defaults to the tab character.
     Returns:
         List of string ZCTA, its string latitude, and its string longitude
         tuples.
@@ -46,7 +45,7 @@ def _extract(path, delimiter='\t'):
     zcta_name = None
     latitude_name = None
     longitude_name = None
-    with open(path, encoding='utf-8', newline='') as f:
+    with open(path, 'r', encoding='utf-8', newline='') as f:
         reader = csv.DictReader(f, delimiter=delimiter)
         # Workaround the trailing spaces in the gazetteer file
         # Look for the column names programmatically
@@ -91,8 +90,8 @@ def _extract(path, delimiter='\t'):
 class _UnitTest(unittest.TestCase):
     def test_is_coordinate(self):
         """Test if a string contains a coordinate."""
-        for value in ['', '+', '-', 'foo', 'bar', 'foobar',
-                      '+foo', '+bar', '+foobar', '-foo', '-bar', '-foobar',
+        for value in ['', '+', '-', 'foo', 'foobar',
+                      '+foo', '+foobar', '-foo', '-foobar',
                       '2+2', '4-2', '42+', '42-',
                       '4.2.0', '+4.2.0', '-4.2.0']:
             self.assertFalse(_is_coordinate(value))
@@ -109,35 +108,33 @@ class _UnitTest(unittest.TestCase):
         """Test the guard clauses in _extract()."""
         for value in [None, 42, []]:
             self.assertRaises(TypeError, _extract, 'foobar', value)
-        for value in ['', 'foo', 'bar', 'foobar']:
+        for value in ['', 'foo', 'foobar']:
             self.assertRaises(ValueError, _extract, 'foobar', value)
 
 if __name__ == '__main__':
     import argparse
+    import os.path
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '-c', '--csv', action='store_true',
         help='output the ZIP codes as csv')
-    parser.add_argument(
-        '-d', '--delimiter', default='\t',
-        help='delimiter separating the columns (default: tab)')
     parser.add_argument(
         'path', nargs='?', default='',
         help='path to the raw, decompressed U.S. Census gazetteer file')
     args = parser.parse_args()
 
     if os.path.isfile(args.path):
-        areas = _extract(args.path, args.delimiter)
+        areas = _extract(args.path)
         areas.sort()
         if args.csv:
             # Print the CSV header line
-            print(args.delimiter.join(
+            print('\t'.join(
                 [_ZCTA_PREFIX, _LATITUDE_PREFIX, _LONGITUDE_PREFIX]))
         for zcta, latitude, longitude in areas:
             if args.csv:
-                print(args.delimiter.join([zcta, latitude, longitude]))
+                print('\t'.join([zcta, latitude, longitude]))
             else:
-                print('  ["{0}", {{"lat": {1}, "lon": {2}}}],'.format(
+                print('  ["{}", {{"lat": {}, "lon": {}}}],'.format(
                     zcta, latitude, longitude))
     else:
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(_UnitTest)

@@ -5,13 +5,12 @@ For example, large banks ask for your ZIP code upfront which makes me think they
 [redlining](https://en.wikipedia.org/wiki/Redlining).
 
 If you are like me, you only know your own ZIP code and are hesitant to give it out for something trivial.
-This is where ZIP Decoy comes in.
+This is where [ZIP Decoy](https://thisarray.github.io/zipdecoy/) comes in.
 It returns a list of nearby ZIP codes that you can use instead of your real ZIP code.
 They are close enough so location based results are similar to your actual ZIP code without having to give your real ZIP code.
 
-ZIP Decoy runs entirely in your browser.
+[ZIP Decoy](https://thisarray.github.io/zipdecoy/) runs entirely in your browser.
 It does not track you or save anything.
-Since it is a webpage on GitHub, it cannot do those things.
 
 ## Implementation notes
 
@@ -19,7 +18,7 @@ AKA. Things no one cares about except me.
 
 ### ZCTA
 
-The ZIP codes in ZIP Decoy are based on the ZIP Code Tabulation Areas (ZCTA) from the
+The ZIP codes are based on the ZIP Code Tabulation Areas (ZCTA) from the
 [United States Census Bureau](https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html).
 
 Technically, ZCTA are not the same as ZIP codes because they are based on the most frequent ZIP code in a census block which is combined with other blocks to create larger areas.
